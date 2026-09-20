@@ -1,0 +1,10 @@
+{
+  "name": "rail-shooter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Rail shooter 2.5D pour Sinden Light Gun : prise d'otage dans un avion de ligne",
+  "scripts": {
+    "start": "node serve.mjs 8080"
+  }
+}

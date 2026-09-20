@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rail Shooter — Sinden</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- Cadre blanc requis par la Sinden Light Gun -->
+<div id="frame">
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <div id="overlay" class="screen">
+      <div class="panel">
+        <h1>RAIL SHOOTER</h1>
+        <p class="sub">Prototype 2.5D pour Sinden Light Gun</p>
+        <div class="controls">
+          <div><span class="key">Gâchette</span> tirer</div>
+          <div><span class="key">Pédale / Espace</span> sortir de la cachette (maintenir)</div>
+          <div><span class="key">Hors écran / Clic droit / R</span> recharger</div>
+          <div><span class="key">Échap</span> pause</div>
+        </div>
+        <div class="row">
+          <button id="btn-start" class="primary">DÉMARRER</button>
+          <button id="btn-calib">CALIBRAGE CADRE</button>
+        </div>
+        <div class="row small">
+          <label>Épaisseur du cadre</label>
+          <button id="border-minus">−</button>
+          <span id="border-value">24</span> px
+          <button id="border-plus">+</button>
+          <label class="chk"><input type="checkbox" id="chk-fs" checked> Plein écran</label>
+          <label class="chk"><input type="checkbox" id="chk-toggle"> Pédale en bascule</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="pause" class="screen hidden">
+      <div class="panel">
+        <h2>PAUSE</h2>
+        <div class="row">
+          <button id="btn-resume" class="primary">REPRENDRE</button>
+          <button id="btn-quit">MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="result" class="screen hidden">
+      <div class="panel">
+        <h2 id="result-title">MISSION TERMINÉE</h2>
+        <p id="result-score" class="sub"></p>
+        <p id="result-path" class="sub tiny"></p>
+        <div class="row"><button id="btn-again" class="primary">REJOUER</button></div>
+      </div>
+    </div>
+
+    <div id="calib" class="screen hidden">
+      <div class="calib-inner">
+        <p>Vise les quatre coins pour vérifier le calibrage.</p>
+        <p class="tiny">Le cadre blanc doit toucher les bords physiques de l'écran.</p>
+        <button id="btn-calib-back">RETOUR</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+:root{
+  --border: 24px;
+  --accent: #ffb020;
+  --danger: #ff3b30;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#000}
+body{
+  font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+  color:#fff;
+  -webkit-user-select:none; user-select:none;
+  touch-action:none;
+}
+
+/* Cadre blanc Sinden : doit toucher les bords physiques de l'ecran */
+#frame{
+  position:fixed; inset:0;
+  background:#fff;
+  padding:var(--border);
+}
+#stage{
+  position:relative;
+  width:100%; height:100%;
+  background:#05070d;
+  overflow:hidden;
+}
+#game{position:absolute; inset:0; width:100%; height:100%; display:block}
+body.playing{cursor:none}
+
+.screen{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 50% 40%, rgba(12,18,32,.82), rgba(3,5,10,.96));
+  z-index:5;
+}
+.screen.hidden{display:none}
+
+.panel{
+  text-align:center;
+  padding:clamp(20px,4vh,44px) clamp(24px,5vw,64px);
+  border:2px solid rgba(255,255,255,.14);
+  background:rgba(8,12,22,.72);
+  max-width:min(780px,90%);
+}
+h1{
+  font-size:clamp(32px,7vw,68px);
+  letter-spacing:.14em;
+  color:var(--accent);
+  text-shadow:0 0 24px rgba(255,176,32,.45);
+}
+h2{font-size:clamp(24px,5vw,44px); letter-spacing:.12em}
+.sub{margin-top:10px; opacity:.72; letter-spacing:.06em}
+.tiny{font-size:13px; opacity:.55}
+
+.controls{
+  margin:clamp(16px,3vh,28px) auto 0;
+  display:grid; gap:8px;
+  text-align:left;
+  max-width:460px;
+  font-size:14px; opacity:.85;
+}
+.key{
+  display:inline-block; min-width:170px;
+  color:var(--accent); letter-spacing:.06em;
+}
+
+.row{
+  margin-top:clamp(16px,3vh,26px);
+  display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;
+}
+.row.small{font-size:13px; opacity:.8}
+.row.small label{letter-spacing:.04em}
+.chk{display:flex; align-items:center; gap:6px; margin-left:10px}
+
+button{
+  font:inherit; font-size:15px; letter-spacing:.1em;
+  padding:11px 22px;
+  color:#fff; background:transparent;
+  border:2px solid rgba(255,255,255,.35);
+  cursor:pointer;
+}
+button:hover{border-color:var(--accent); color:var(--accent)}
+button.primary{border-color:var(--accent); color:#0a0a0a; background:var(--accent); font-weight:700}
+button.primary:hover{filter:brightness(1.12); color:#0a0a0a}
+.row.small button{padding:4px 12px; font-size:16px; line-height:1}
+
+#calib{background:#000}
+.calib-inner{text-align:center; display:grid; gap:10px; justify-items:center}
