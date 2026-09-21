@@ -2,10 +2,13 @@ import { clamp, lerp, rand } from '../core/math.js';
 import { Player, CROUCH_EYE } from './player.js';
 import { Director, PHASE } from './director.js';
 import { Effects } from './effects.js';
-import { renderHud, renderCrosshair } from './hud.js';
+import { renderHud, renderCrosshair, renderDiagnostics } from './hud.js';
 
 const inRect = (r, x, y) =>
   r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+
+// Coup garde en memoire quand la detente part pendant le relevement.
+const SHOT_BUFFER = 0.3;
 
 export const STATE = {
   MENU: 'menu',
@@ -25,6 +28,9 @@ export class Game {
     this.effects = new Effects();
     this.state = STATE.MENU;
     this.overReason = null;
+    this.shotBuffer = 0;
+    this.lastBlock = '';
+    this.debug = false;
     this.pedalToggle = false;
     this._toggleState = false;
     this.onStateChange = () => {};
@@ -37,6 +43,8 @@ export class Game {
     this.effects.reset();
     this.director.reset();
     this.input.clearQueued();
+    this.shotBuffer = 0;
+    this.lastBlock = '';
     this._toggleState = false;
     this.setState(STATE.PLAYING);
   }
@@ -72,6 +80,17 @@ export class Game {
     while (this.input.takeTrigger()) this.shoot();
 
     p.update(dt, d.hasCover);
+
+    // Le coup mis en attente part des que le joueur est debout et pret.
+    if (this.shotBuffer > 0) {
+      this.shotBuffer -= dt;
+      if (p.canShoot()) {
+        this.shotBuffer = 0;
+        this.lastBlock = '';
+        this.fire(this.input.x, this.input.y);
+      }
+    }
+
     d.update(dt, p);
     this.effects.update(dt);
     this.updateCamera(dt);
@@ -134,17 +153,32 @@ export class Game {
       }
     }
 
-    if (p.reloading) return;
-    if (!p.exposed) {
-      // A couvert on ne tire pas, comme sur Time Crisis.
+    if (!p.exposed || p.reloading) {
+      // A couvert on ne tire pas, comme sur Time Crisis. Mais si le joueur est
+      // en train de se lever, le coup est garde en memoire au lieu d'etre
+      // avale : au pistolet, pedale et detente partent quasi ensemble.
+      if (!d.hasCover || p.wantExposed) {
+        this.shotBuffer = SHOT_BUFFER;
+        this.lastBlock = p.reloading ? 'rechargement en cours' : 'relevement';
+      } else {
+        this.lastBlock = 'a couvert';
+      }
       return;
     }
     if (p.ammo <= 0) {
       this.audio.empty();
       this.effects.text(x, y, 'RECHARGEZ', '#ff5544', 16);
+      this.lastBlock = 'chargeur vide';
       return;
     }
+    this.lastBlock = '';
+    this.fire(x, y);
+  }
 
+  /** Tir effectif, une fois toutes les conditions reunies. */
+  fire(x, y) {
+    const d = this.director;
+    const p = this.player;
     p.consumeShot();
     this.audio.shot();
     this.effects.spark(x, y, 0.55, '#fff0b8');
@@ -272,6 +306,7 @@ export class Game {
       renderHud(ctx, this);
       renderCrosshair(ctx, this);
     }
+    if (this.debug) renderDiagnostics(ctx, this);
   }
 
   vignette(ctx) {

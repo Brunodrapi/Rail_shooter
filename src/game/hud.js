@@ -206,3 +206,80 @@ export function renderCrosshair(ctx, game) {
   ctx.fill();
   ctx.restore();
 }
+
+/**
+ * Ecran de diagnostic des entrees (F1 ou I).
+ * Il affiche en direct ce que le navigateur recoit : c'est le moyen le plus
+ * simple de decouvrir sur quoi le logiciel Sinden a mappe chaque bouton du
+ * pistolet, et pourquoi un tir a ete refuse.
+ */
+export function renderDiagnostics(ctx, game) {
+  const { w, h } = game.renderer;
+  const u = Math.max(0.62, Math.min(w / 1280, h / 720));
+  const inp = game.input;
+  const p = game.player;
+
+  const lines = [
+    ['Pointeur', `${inp.x | 0} , ${inp.y | 0}${inp.hasPointer ? '' : '  (aucun)'}`],
+    ['Boutons souris', [...inp.heldButtons].join('  ') || '—'],
+    ['Touches', [...inp.heldKeys].join('  ') || '—'],
+    ['Manette', inp.padButtons.join('  ') || '—'],
+    ['Derniers appuis', inp.log.slice(0, 4).join(' · ') || '—'],
+    ['—', ''],
+    ['Pédale tenue', inp.coverHeld ? 'OUI' : 'non'],
+    ['Exposition', p.exposure.toFixed(2) + (p.exposed ? '  (peut tirer)' : '')],
+    ['Munitions', `${p.ammo}/${p.magSize}${p.reloading ? '  rechargement' : ''}`],
+    ['Coup en attente', game.shotBuffer > 0 ? game.shotBuffer.toFixed(2) + ' s' : '—'],
+    ['Tir refusé', game.lastBlock || '—'],
+    ['—', ''],
+    ['Tirer  →', 'souris 0'],
+    ['Cachette  →', 'souris 1 · Espace · Maj · C'],
+    ['Recharger  →', 'souris 2 · R'],
+  ];
+
+  const fs = 13 * u;
+  const pad = 12 * u;
+  const lh = fs * 1.55;
+  const bw = 410 * u;
+  const bh = pad * 2 + lh * (lines.length + 1);
+  const bx = 18 * u;
+  const by = h / 2 - bh / 2;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(bx, by, bw, bh);
+  ctx.clip();
+  ctx.fillStyle = 'rgba(4,8,16,.86)';
+  ctx.fillRect(bx, by, bw, bh);
+  ctx.strokeStyle = 'rgba(255,176,32,.6)';
+  ctx.lineWidth = Math.max(1, 2 * u);
+  ctx.strokeRect(bx, by, bw, bh);
+
+  let y = by + pad + fs;
+  ctx.font = `700 ${fs}px ${FONT}`;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#ffb020';
+  ctx.fillText('DIAGNOSTIC ENTRÉES — F1 pour fermer', bx + pad, y);
+  y += lh;
+
+  for (const [label, value] of lines) {
+    if (label === '—') {
+      ctx.strokeStyle = 'rgba(255,255,255,.14)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(bx + pad, y - fs * 0.4);
+      ctx.lineTo(bx + bw - pad, y - fs * 0.4);
+      ctx.stroke();
+      y += lh * 0.55;
+      continue;
+    }
+    ctx.font = `600 ${fs}px ${FONT}`;
+    ctx.fillStyle = 'rgba(255,255,255,.5)';
+    ctx.fillText(label, bx + pad, y);
+    ctx.font = `700 ${fs}px ${FONT}`;
+    ctx.fillStyle = '#fff';
+    ctx.fillText(String(value), bx + pad + 148 * u, y);
+    y += lh;
+  }
+  ctx.restore();
+}

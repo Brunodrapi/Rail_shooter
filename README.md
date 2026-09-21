@@ -46,6 +46,19 @@ aucune bordure : il occupe toute la surface.
 
 Le Pointer Lock n'est jamais utilisé : il casserait le pointage absolu.
 
+### Si la détente ne répond plus pendant qu'un bouton est maintenu
+
+Appuie sur **F1** en jeu : un panneau affiche en direct tout ce que le
+navigateur reçoit, boutons de souris, touches, boutons de manette, position du
+pointeur, et la raison exacte d'un tir refusé. C'est le moyen le plus rapide de
+voir sur quoi le logiciel Sinden a mappé un bouton du pistolet.
+
+Le cas le plus courant est un bouton mappé sur le **bouton du milieu de la
+souris**. Le navigateur y déclenche son défilement automatique, qui capture
+ensuite les clics gauches : la détente paraît morte tant que le bouton est
+maintenu. Le jeu neutralise ce comportement, mais si ton installation reste
+capricieuse, mappe plutôt ce bouton sur **Espace**.
+
 ## Architecture
 
 ```

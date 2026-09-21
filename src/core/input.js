@@ -29,6 +29,15 @@ export class Input {
     this._padReloadPrev = false;
 
     this.enabled = true;
+
+    // Journal de diagnostic : sert a decouvrir sur quoi le logiciel Sinden
+    // a mappe chaque bouton du pistolet.
+    this.heldButtons = new Set();
+    this.heldKeys = new Set();
+    this.padButtons = [];
+    this.log = [];
+    this._debugQueued = 0;
+
     this._bind();
   }
 
@@ -44,20 +53,42 @@ export class Input {
     window.addEventListener('pointermove', move, { passive: true });
     window.addEventListener('pointerdown', (e) => {
       move(e);
+      this.heldButtons.add(e.button);
+      this.note('souris ' + e.button);
       if (!this.enabled) return;
       if (e.button === 0) this._triggerQueued++;
       else if (e.button === 2) this._reloadQueued++;
       else if (e.button === 1) this._coverMouse = true;
     });
     window.addEventListener('pointerup', (e) => {
+      this.heldButtons.delete(e.button);
       if (e.button === 1) this._coverMouse = false;
     });
+    // Le bouton du milieu declenche le defilement automatique du navigateur,
+    // qui capture ensuite les clics gauches : la detente semble morte tant que
+    // le bouton de cachette est maintenu. On le neutralise sur mousedown, seul
+    // endroit ou le navigateur accepte de l'annuler.
+    window.addEventListener(
+      'mousedown',
+      (e) => {
+        if (e.button === 1 || e.button === 2) e.preventDefault();
+      },
+      { capture: true }
+    );
+    window.addEventListener('auxclick', (e) => e.preventDefault());
     // Indispensable : le tir hors ecran de la Sinden envoie un clic droit.
     window.addEventListener('contextmenu', (e) => e.preventDefault());
     window.addEventListener('dragstart', (e) => e.preventDefault());
 
     window.addEventListener('keydown', (e) => {
       if (e.repeat) return;
+      this.heldKeys.add(e.code);
+      this.note('touche ' + e.code);
+      if (e.code === 'F1' || e.code === 'KeyI') {
+        this._debugQueued++;
+        e.preventDefault();
+        return;
+      }
       if (COVER_KEYS.has(e.code)) {
         this._coverKey = true;
         e.preventDefault();
@@ -70,12 +101,22 @@ export class Input {
       }
     });
     window.addEventListener('keyup', (e) => {
+      this.heldKeys.delete(e.code);
       if (COVER_KEYS.has(e.code)) this._coverKey = false;
     });
     window.addEventListener('blur', () => {
       this._coverKey = false;
       this._coverMouse = false;
+      this.heldKeys.clear();
+      this.heldButtons.clear();
     });
+  }
+
+  /** Retient le dernier appui de chaque source, pour l'ecran de diagnostic. */
+  note(label) {
+    if (this.log[0] === label) return;
+    this.log.unshift(label);
+    if (this.log.length > 6) this.log.pop();
   }
 
   pollGamepad() {
@@ -84,8 +125,15 @@ export class Input {
     let trigger = false,
       reload = false,
       cover = false;
+    this.padButtons.length = 0;
     for (const p of pads) {
       if (!p || !p.buttons) continue;
+      for (let i = 0; i < p.buttons.length; i++) {
+        if (p.buttons[i].pressed) {
+          this.padButtons.push(i);
+          this.note('manette ' + i);
+        }
+      }
       if (p.buttons[0] && p.buttons[0].pressed) trigger = true;
       if (p.buttons[1] && p.buttons[1].pressed) cover = true;
       if (p.buttons[2] && p.buttons[2].pressed) reload = true;
@@ -124,6 +172,14 @@ export class Input {
   takePause() {
     if (this._pauseQueued > 0) {
       this._pauseQueued--;
+      return true;
+    }
+    return false;
+  }
+
+  takeDebug() {
+    if (this._debugQueued > 0) {
+      this._debugQueued--;
       return true;
     }
     return false;

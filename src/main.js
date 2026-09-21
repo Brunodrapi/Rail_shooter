@@ -96,6 +96,7 @@ function frame(now) {
   if (dt > 0.25) dt = 0.25;
   acc += dt;
   input.beginFrame();
+  if (input.takeDebug()) game.debug = !game.debug;
   let guard = 0;
   while (acc >= STEP && guard++ < 6) {
     game.update(STEP);
