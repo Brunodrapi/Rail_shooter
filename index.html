@@ -3,13 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rail Shooter — Sinden</title>
+<title>Rail Shooter</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<!-- Cadre blanc requis par la Sinden Light Gun -->
-<div id="frame">
-  <div id="stage">
+<div id="stage">
     <canvas id="game"></canvas>
 
     <div id="overlay" class="screen">
@@ -24,13 +22,8 @@
         </div>
         <div class="row">
           <button id="btn-start" class="primary">DÉMARRER</button>
-          <button id="btn-calib">CALIBRAGE CADRE</button>
         </div>
         <div class="row small">
-          <label>Épaisseur du cadre</label>
-          <button id="border-minus">−</button>
-          <span id="border-value">24</span> px
-          <button id="border-plus">+</button>
           <label class="chk"><input type="checkbox" id="chk-fs" checked> Plein écran</label>
           <label class="chk"><input type="checkbox" id="chk-toggle"> Pédale en bascule</label>
         </div>
@@ -56,14 +49,6 @@
       </div>
     </div>
 
-    <div id="calib" class="screen hidden">
-      <div class="calib-inner">
-        <p>Vise les quatre coins pour vérifier le calibrage.</p>
-        <p class="tiny">Le cadre blanc doit toucher les bords physiques de l'écran.</p>
-        <button id="btn-calib-back">RETOUR</button>
-      </div>
-    </div>
-  </div>
 </div>
 <script type="module" src="src/main.js"></script>
 </body>

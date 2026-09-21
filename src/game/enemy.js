@@ -58,6 +58,12 @@ export class Enemy {
     this.shield = !!k.shield;
     this.boss = !!k.boss;
 
+    // Repli de duree variable : sans cela les ennemis se synchronisent.
+    this.hideTime = def.hide || rand(0.8, 1.9);
+    // Un ennemi ne quitte la scene que mort, ou quand le chrono du beat
+    // force la retraite : sinon il replonge et ressort tant qu'il vit.
+    this.permanent = false;
+
     this.state = 'wait';
     this.t = 0;
     this.y = this.groundY + this.riseFrom;
@@ -81,6 +87,7 @@ export class Enemy {
     return (
       this.alive &&
       this.state !== 'wait' &&
+      this.state !== 'hidden' &&
       this.state !== 'dying' &&
       this.rect !== null
     );
@@ -127,11 +134,23 @@ export class Enemy {
         const p = clamp(this.t / 0.35, 0, 1);
         this.y = this.groundY + this.riseFrom * p;
         if (p >= 1) {
-          this.state = 'gone';
-          this.done = true;
+          if (this.friendly || this.permanent) {
+            this.state = 'gone';
+            this.done = true;
+          } else {
+            this.setState('hidden');
+          }
         }
         break;
       }
+      case 'hidden':
+        // Repli temporaire : il recharge et repart a l'assaut.
+        if (this.t >= this.hideTime) {
+          this.shotsLeft = this.cfg.shots;
+          this.hideTime = rand(0.8, 1.9);
+          this.setState('rise');
+        }
+        break;
       case 'dying': {
         this.fallT = clamp(this.t / 0.55, 0, 1);
         if (this.fallT >= 1) {
@@ -142,6 +161,19 @@ export class Enemy {
       }
       default:
         break;
+    }
+  }
+
+  /** Retraite definitive, declenchee par la fin du chrono de la vague. */
+  retreat() {
+    if (this.state === 'dying' || this.state === 'dead' || this.state === 'gone')
+      return;
+    this.permanent = true;
+    if (this.state === 'hidden' || this.state === 'wait') {
+      this.state = 'gone';
+      this.done = true;
+    } else if (this.state !== 'duck') {
+      this.setState('duck');
     }
   }
 
@@ -176,7 +208,12 @@ export class Enemy {
     this.rect = null;
     this.shieldRect = null;
 
-    if (this.state === 'wait' || this.state === 'gone' || this.state === 'dead')
+    if (
+      this.state === 'wait' ||
+      this.state === 'hidden' ||
+      this.state === 'gone' ||
+      this.state === 'dead'
+    )
       return;
 
     const alpha = this.state === 'dying' ? 1 : 1;

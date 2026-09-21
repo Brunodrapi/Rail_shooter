@@ -13,27 +13,6 @@ const el = (id) => document.getElementById(id);
 const overlay = el('overlay');
 const pauseScreen = el('pause');
 const resultScreen = el('result');
-const calibScreen = el('calib');
-
-/* ------------------------------------------------------------------ */
-/* Cadre blanc Sinden : largeur reglable et memorisee                   */
-const BORDER_KEY = 'railshooter.border';
-let borderPx = parseInt(localStorage.getItem(BORDER_KEY) || '24', 10);
-function applyBorder() {
-  borderPx = Math.max(0, Math.min(80, borderPx));
-  document.documentElement.style.setProperty('--border', borderPx + 'px');
-  el('border-value').textContent = String(borderPx);
-  localStorage.setItem(BORDER_KEY, String(borderPx));
-  resize();
-}
-el('border-minus').addEventListener('click', () => {
-  borderPx -= 2;
-  applyBorder();
-});
-el('border-plus').addEventListener('click', () => {
-  borderPx += 2;
-  applyBorder();
-});
 
 const TOGGLE_KEY = 'railshooter.pedalToggle';
 const chkToggle = el('chk-toggle');
@@ -53,7 +32,7 @@ window.addEventListener('orientationchange', resize);
 document.addEventListener('fullscreenchange', () => setTimeout(resize, 60));
 
 function show(screen) {
-  for (const s of [overlay, pauseScreen, resultScreen, calibScreen])
+  for (const s of [overlay, pauseScreen, resultScreen])
     s.classList.toggle('hidden', s !== screen);
   document.body.classList.toggle('playing', screen === null);
   input.enabled = screen === null;
@@ -87,11 +66,6 @@ el('btn-quit').addEventListener('click', () => {
   game.setState(STATE.MENU);
   show(overlay);
 });
-el('btn-calib').addEventListener('click', () => {
-  goFullscreen();
-  show(calibScreen);
-});
-el('btn-calib-back').addEventListener('click', () => show(overlay));
 
 game.onStateChange = (s) => {
   if (s === STATE.PAUSED) show(pauseScreen);
@@ -128,7 +102,6 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-applyBorder();
 resize();
 show(overlay);
 requestAnimationFrame(frame);

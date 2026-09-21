@@ -34,23 +34,22 @@ pratique pour tester longtemps au clavier.
 
 ## Configurer la Sinden
 
-La Sinden repère un cadre blanc filmé par sa caméra, puis se présente comme une
-souris en position absolue. Le jeu dessine ce cadre lui-même.
+La Sinden repère le cadre blanc que **son propre logiciel superpose à l'écran**,
+puis se présente comme une souris en position absolue. Le jeu ne dessine donc
+aucune bordure : il occupe toute la surface.
 
 1. Lancer en plein écran, ou en mode kiosque : `chromium --kiosk http://localhost:8080`.
-2. Régler l'épaisseur du cadre depuis le menu. Elle est mémorisée dans le navigateur.
-3. Vérifier avec l'écran **Calibrage cadre** que le blanc touche bien les bords
-   physiques de la dalle.
-4. Dans le logiciel Sinden, mapper le tir hors écran sur le **clic droit** et le
-   bouton de cachette sur **Espace** ou le bouton milieu.
-5. Désactiver l'accélération de la souris côté système.
+2. Activer la superposition de bordure dans le logiciel Sinden et la calibrer là-bas.
+3. Mapper le tir hors écran sur le **clic droit** et le bouton de cachette sur
+   **Espace** ou le bouton milieu.
+4. Désactiver l'accélération de la souris côté système.
 
 Le Pointer Lock n'est jamais utilisé : il casserait le pointage absolu.
 
 ## Architecture
 
 ```
-index.html            cadre blanc Sinden + calques de menu
+index.html            page plein écran + calques de menu
 css/style.css
 src/core/renderer.js  projection perspective, découpe au plan proche,
                       algorithme du peintre, tri grossier hors champ
@@ -70,6 +69,13 @@ Il n'y a pas de moteur 3D : chaque quadrilatère est projeté à la main puis tr
 par profondeur, et les personnages sont des sprites face caméra. C'est ce qui
 permet de tenir 60 images par seconde en Canvas2D avec plusieurs milliers de
 faces.
+
+### Rythme des vagues
+
+Une vague ne se termine que lorsque **tous les tireurs sont abattus**. Un ennemi
+qui a vidé son chargeur replonge derrière les sièges pendant une seconde environ,
+puis ressort et recommence. Seul le chrono du beat met fin à la vague de force,
+au prix d'une vie.
 
 ### Réticule de menace
 
@@ -107,6 +113,4 @@ Queue de l'appareil
 - **Un seul joueur.** Le navigateur n'expose qu'un curseur système, donc deux
   Sinden simultanées ne sont pas séparables en HTML pur. Le coop à deux imposerait
   un habillage Electron avec un module natif de raw input.
-- Le cadre blanc n'est correct qu'en plein écran réel ; en fenêtre, l'habillage du
-  navigateur le rogne.
 - Sur configuration multi-écrans, la fenêtre doit être sur la dalle calibrée.

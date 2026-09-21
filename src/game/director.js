@@ -153,7 +153,7 @@ export class Director {
           this.beatTimer = 0;
           player.damage(1);
           this.game.audio.hurt();
-          for (const en of this.enemies) if (en.alive) en.setState('duck');
+          for (const en of this.enemies) en.retreat();
         }
         this.updateActors(dt, player);
         const remaining = this.enemies.some((en) => !en.friendly && !en.done);
