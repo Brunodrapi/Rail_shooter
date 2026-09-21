@@ -91,6 +91,11 @@ export class SoundBank {
     this._tone(0.1, 700, 1200, 0.22, 'triangle');
     setTimeout(() => this._tone(0.16, 1200, 1800, 0.22, 'triangle'), 110);
   }
+  bonus() {
+    this._tone(0.09, 880, 1320, 0.2, 'triangle');
+    setTimeout(() => this._tone(0.09, 1320, 1760, 0.2, 'triangle'), 90);
+    setTimeout(() => this._tone(0.22, 1760, 2100, 0.18, 'triangle'), 180);
+  }
   alarm() {
     this._tone(0.22, 520, 380, 0.16, 'triangle');
   }

@@ -24,6 +24,7 @@ export class Game {
     this.director = new Director(this);
     this.effects = new Effects();
     this.state = STATE.MENU;
+    this.overReason = null;
     this.pedalToggle = false;
     this._toggleState = false;
     this.onStateChange = () => {};
@@ -31,6 +32,7 @@ export class Game {
   }
 
   start() {
+    this.overReason = null;
     this.player.reset();
     this.effects.reset();
     this.director.reset();
@@ -74,7 +76,11 @@ export class Game {
     this.effects.update(dt);
     this.updateCamera(dt);
 
-    if (p.dead) {
+    if (d.timeUp) {
+      this.overReason = 'time';
+      this.setState(STATE.OVER);
+    } else if (p.dead) {
+      this.overReason = 'hp';
       this.setState(STATE.OVER);
     } else if (d.phase === PHASE.FINISH) {
       this.setState(STATE.WIN);
@@ -196,6 +202,19 @@ export class Game {
     this.player.combo = 0;
   }
 
+  /** Vague nettoyee : secondes rendues + points pour le temps epargne. */
+  onWaveCleared(bonus, saved) {
+    const w = this.renderer.w;
+    const h = this.renderer.h;
+    this.audio.bonus();
+    this.effects.text(w / 2, h * 0.3, `TEMPS +${bonus.toFixed(0)}s`, '#6fe07a', 40);
+    const pts = Math.round(saved * 150);
+    if (pts > 0) {
+      this.player.score += pts;
+      this.effects.text(w / 2, h * 0.38, `RAPIDITÉ +${pts}`, '#ffd24a', 24);
+    }
+  }
+
   hitEnemy(en, x, y, head) {
     const killed = en.hitBy(head ? 3 : 1);
     if (head) {
@@ -271,6 +290,8 @@ export class Game {
       score: p.score,
       accuracy: acc,
       bestCombo: p.bestCombo,
+      reason: this.overReason,
+      clock: this.director.clock,
       hostages: p.hostagesHit,
       path: this.director.path.slice(),
     };

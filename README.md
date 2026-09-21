@@ -70,12 +70,32 @@ par profondeur, et les personnages sont des sprites face caméra. C'est ce qui
 permet de tenir 60 images par seconde en Canvas2D avec plusieurs milliers de
 faces.
 
+### Horloge de mission
+
+Le modèle est celui du premier Time Crisis : **une seule horloge** descend en
+permanence, plafonnée à 60 secondes, et tomber à zéro déclenche un game over
+immédiat, pas une simple perte de vie. Nettoyer une vague en rend une partie.
+Les suites de la série remettent le chrono à plein et ne coûtent qu'une vie ;
+c'est le modèle du premier épisode qui est repris ici.
+
+| Réglage | Valeur | Où |
+|---|---|---|
+| Plafond | 60 s | `CLOCK_MAX` dans `director.js` |
+| Départ | 45 s | `CLOCK_START` |
+| Bonus par vague | 9 à 20 s selon le nombre de tireurs | `waveBonus()` |
+| Durée de référence | 3 s + 2,4 s par tireur | `wavePar()` |
+| Prime de rapidité | 150 points par seconde épargnée | `onWaveCleared()` |
+
+Un beat peut forcer ses propres valeurs avec les champs `bonus` et `par`, ce que
+fait le combat final du cockpit. L'horloge tourne pendant la progression et le
+combat, mais pas pendant les cartons de titre ni le choix d'itinéraire.
+
 ### Rythme des vagues
 
 Une vague ne se termine que lorsque **tous les tireurs sont abattus**. Un ennemi
-qui a vidé son chargeur replonge derrière les sièges pendant une seconde environ,
-puis ressort et recommence. Seul le chrono du beat met fin à la vague de force,
-au prix d'une vie.
+qui a vidé son chargeur replonge derrière les sièges de 0,8 à 1,9 seconde, puis
+ressort avec un chargeur plein. Rien ne le fait partir vivant : c'est l'horloge
+seule qui sanctionne le joueur trop lent.
 
 ### Réticule de menace
 

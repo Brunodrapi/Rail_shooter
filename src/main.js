@@ -72,7 +72,11 @@ game.onStateChange = (s) => {
   else if (s === STATE.OVER || s === STATE.WIN) {
     const st = game.stats();
     el('result-title').textContent =
-      s === STATE.WIN ? 'OTAGES LIBÉRÉS' : 'MISSION ÉCHOUÉE';
+      s === STATE.WIN
+        ? 'OTAGES LIBÉRÉS'
+        : st.reason === 'time'
+        ? 'TEMPS ÉCOULÉ'
+        : 'MISSION ÉCHOUÉE';
     el('result-score').textContent =
       `Score ${st.score} · Précision ${st.accuracy}% · Meilleur combo ×${st.bestCombo}` +
       (st.hostages ? ` · Otages touchés ${st.hostages}` : '');

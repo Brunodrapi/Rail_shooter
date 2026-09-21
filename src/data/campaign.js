@@ -88,7 +88,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: -8.2, yaw: 0 },
           travel: 2.2,
           cover: cartCover(0, -7.1),
-          limit: 26,
           enemies: [
             e('otage', -2.85, -2.6, 0.2),
             aisle('pirate', 1.4, -3.8, 0.9),
@@ -99,7 +98,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: -5.6, yaw: 0 },
           travel: 2.0,
           cover: cartCover(0, -4.6),
-          limit: 26,
           enemies: [
             e('otage', 0, -0.9, 0.3),
             aisle('pirate', -1.4, -1.2, 0.8),
@@ -111,7 +109,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: -2.6, yaw: 0 },
           travel: 1.8,
           cover: cartCover(0, -1.6),
-          limit: 30,
           enemies: [
             e('otage', -2.85, 1.6, 0.2),
             e('otage', 2.85, 2.4, 0.7),
@@ -144,7 +141,6 @@ export const CAMPAIGN = {
           cam: { x: AL, y: EYE, z: 0.6, yaw: 0 },
           travel: 2.4,
           cover: cartCover(AL, 1.7),
-          limit: 26,
           enemies: [
             e('otage', -2.85, 4.6, 0.2),
             aisle('pirate', AL, 5.4, 0.9),
@@ -155,7 +151,6 @@ export const CAMPAIGN = {
           cam: { x: AL, y: EYE, z: 4.0, yaw: 0 },
           travel: 2.2,
           cover: cartCover(AL, 5.1),
-          limit: 28,
           enemies: [
             e('otage', 0, 8.2, 0.3),
             aisle('pirate', AL, 8.6, 0.8),
@@ -167,7 +162,6 @@ export const CAMPAIGN = {
           cam: { x: AL, y: EYE, z: 7.4, yaw: 0 },
           travel: 2.0,
           cover: cartCover(AL, 8.5),
-          limit: 32,
           enemies: [
             e('otage', 0, 11.6, 0.2),
             aisle('bouclier', AL, 12.2, 0.6, { lean: 1 }),
@@ -196,7 +190,6 @@ export const CAMPAIGN = {
           cam: { x: AR, y: EYE, z: 0.6, yaw: 0 },
           travel: 2.4,
           cover: cartCover(AR, 1.7),
-          limit: 26,
           enemies: [
             e('otage', 2.85, 4.4, 0.2),
             aisle('pirate', AR, 5.6, 0.8),
@@ -207,7 +200,6 @@ export const CAMPAIGN = {
           cam: { x: AR, y: EYE, z: 4.0, yaw: 0 },
           travel: 2.2,
           cover: cartCover(AR, 5.1),
-          limit: 28,
           enemies: [
             e('otage', 0, 8.0, 0.2),
             e('otage', 2.85, 9.0, 0.9),
@@ -219,7 +211,6 @@ export const CAMPAIGN = {
           cam: { x: AR, y: EYE, z: 7.4, yaw: 0 },
           travel: 2.0,
           cover: cartCover(AR, 8.5),
-          limit: 32,
           enemies: [
             e('otage', -2.85, 11.4, 0.2),
             aisle('bouclier', AR, 12.0, 0.5, { lean: -1 }),
@@ -256,7 +247,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: 10.6, yaw: 0 },
           travel: 2.6,
           cover: cartCover(0, 11.7),
-          limit: 28,
           enemies: [
             e('otage', -2.85, 14.4, 0.2),
             aisle('pirate', AR, 14.8, 0.8),
@@ -268,7 +258,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: 13.8, yaw: 0 },
           travel: 2.2,
           cover: counterCover(0, 14.9, 1.6),
-          limit: 34,
           enemies: [
             e('otage', 0, 18.0, 0.2),
             aisle('lourd', AL, 18.4, 0.6),
@@ -304,7 +293,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: 17.0, yaw: 0 },
           travel: 2.4,
           cover: cartCover(0, 18.1),
-          limit: 26,
           enemies: [
             e('otage', -1.95, 21.0, 0.2),
             aisle('tireur', 0.8, 21.8, 0.8),
@@ -315,7 +303,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: 20.4, yaw: 0 },
           travel: 2.2,
           cover: cartCover(0, 21.5),
-          limit: 32,
           enemies: [
             e('otage', 1.95, 24.2, 0.2),
             aisle('lourd', 0.8, 24.8, 0.6),
@@ -349,7 +336,6 @@ export const CAMPAIGN = {
           cam: { x: AR, y: EYE, z: 17.0, yaw: 0 },
           travel: 2.4,
           cover: cartCover(AR, 18.1),
-          limit: 26,
           enemies: [
             e('otage', 2.7, 21.2, 0.2),
             aisle('pirate', AR, 21.8, 0.9),
@@ -360,7 +346,6 @@ export const CAMPAIGN = {
           cam: { x: AR, y: EYE, z: 20.4, yaw: 0 },
           travel: 2.2,
           cover: cartCover(AR, 21.5),
-          limit: 32,
           enemies: [
             e('otage', 0, 24.0, 0.2),
             aisle('bouclier', AR, 24.8, 0.5, { lean: -1 }),
@@ -398,7 +383,6 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: 23.6, yaw: 0 },
           travel: 2.6,
           cover: cartCover(0, 24.7),
-          limit: 24,
           enemies: [
             aisle('pirate', -1.6, 27.6, 0.5),
             aisle('pirate', 1.6, 27.6, 1.4),
@@ -409,7 +393,8 @@ export const CAMPAIGN = {
           cam: { x: 0, y: EYE, z: 26.6, yaw: 0 },
           travel: 2.0,
           cover: cartCover(0, 27.7),
-          limit: 48,
+          bonus: 26,
+          par: 24,
           boss: true,
           enemies: [
             e('otage', -1.7, 31.0, 0.4),

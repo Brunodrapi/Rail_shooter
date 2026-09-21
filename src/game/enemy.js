@@ -60,9 +60,8 @@ export class Enemy {
 
     // Repli de duree variable : sans cela les ennemis se synchronisent.
     this.hideTime = def.hide || rand(0.8, 1.9);
-    // Un ennemi ne quitte la scene que mort, ou quand le chrono du beat
-    // force la retraite : sinon il replonge et ressort tant qu'il vit.
-    this.permanent = false;
+    // Un ennemi ne quitte la scene que mort : sinon il replonge derriere
+    // les sieges et ressort, indefiniment.
 
     this.state = 'wait';
     this.t = 0;
@@ -134,7 +133,7 @@ export class Enemy {
         const p = clamp(this.t / 0.35, 0, 1);
         this.y = this.groundY + this.riseFrom * p;
         if (p >= 1) {
-          if (this.friendly || this.permanent) {
+          if (this.friendly) {
             this.state = 'gone';
             this.done = true;
           } else {
@@ -161,19 +160,6 @@ export class Enemy {
       }
       default:
         break;
-    }
-  }
-
-  /** Retraite definitive, declenchee par la fin du chrono de la vague. */
-  retreat() {
-    if (this.state === 'dying' || this.state === 'dead' || this.state === 'gone')
-      return;
-    this.permanent = true;
-    if (this.state === 'hidden' || this.state === 'wait') {
-      this.state = 'gone';
-      this.done = true;
-    } else if (this.state !== 'duck') {
-      this.setState('duck');
     }
   }
 

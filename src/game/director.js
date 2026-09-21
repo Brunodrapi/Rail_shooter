@@ -13,6 +13,23 @@ export const PHASE = {
 
 const BRANCH_TIME = 6;
 
+// Modele Time Crisis premier du nom : une seule horloge qui descend en
+// permanence, plafonnee, rechargee partiellement a chaque vague nettoyee,
+// et zero signifie game over immediat (pas une vie en moins).
+export const CLOCK_MAX = 60;
+export const CLOCK_START = 45;
+
+const hostileCount = (beat) =>
+  beat.enemies.filter((d) => d.kind !== 'otage').length;
+
+/** Secondes rendues quand la vague tombe. */
+export const waveBonus = (beat) =>
+  beat.bonus !== undefined ? beat.bonus : clamp(7 + 2.6 * hostileCount(beat), 9, 20);
+
+/** Duree de reference : nettoyer plus vite rapporte des points. */
+export const wavePar = (beat) =>
+  beat.par !== undefined ? beat.par : 3 + 2.4 * hostileCount(beat);
+
 /**
  * Enchaine les sections du scenario. Chaque section est une suite de "beats" :
  * la camera avance sur son rail jusqu'a un point d'arret, une vague apparait,
@@ -36,7 +53,10 @@ export class Director {
     this.phaseT = 0;
     this.pose = { x: 0, y: 1.62, z: -12, yaw: 0 };
     this.fromPose = { ...this.pose };
-    this.beatTimer = 0;
+    this.clock = CLOCK_START;
+    this.timeUp = false;
+    this.lastBonus = 0;
+    this.bonusFlash = 0;
     this.path = [];
     this.exits = null;
     this.branchT = 0;
@@ -94,7 +114,6 @@ export class Director {
   spawnWave() {
     this.enemies.length = 0;
     for (const def of this.beat.enemies) this.enemies.push(new Enemy(def));
-    this.beatTimer = this.beat.limit || 30;
     this.setPhase(PHASE.COMBAT);
     if (this.beat.boss) this.game.audio.alarm();
   }
@@ -127,6 +146,17 @@ export class Director {
   update(dt, player) {
     this.phaseT += dt;
     this.walkPhase += dt;
+    this.bonusFlash = Math.max(0, this.bonusFlash - dt * 0.9);
+
+    // L'horloge tourne pendant la progression et le combat, pas pendant les
+    // cartons de titre ni le choix d'itineraire.
+    if (this.phase === PHASE.TRAVEL || this.phase === PHASE.COMBAT) {
+      this.clock -= dt;
+      if (this.clock <= 0) {
+        this.clock = 0;
+        this.timeUp = true;
+      }
+    }
 
     switch (this.phase) {
       case PHASE.TITLE:
@@ -148,16 +178,10 @@ export class Director {
       }
 
       case PHASE.COMBAT: {
-        this.beatTimer -= dt;
-        if (this.beatTimer <= 0) {
-          this.beatTimer = 0;
-          player.damage(1);
-          this.game.audio.hurt();
-          for (const en of this.enemies) en.retreat();
-        }
         this.updateActors(dt, player);
         const remaining = this.enemies.some((en) => !en.friendly && !en.done);
         if (!remaining && this.bullets.length === 0) {
+          this.clearWave();
           this.setPhase(PHASE.CLEAR);
         }
         break;
@@ -185,6 +209,16 @@ export class Director {
       default:
         break;
     }
+  }
+
+  /** Vague nettoyee : recharge de l'horloge et prime de rapidite. */
+  clearWave() {
+    const bonus = waveBonus(this.beat);
+    const saved = Math.max(0, wavePar(this.beat) - this.phaseT);
+    this.clock = Math.min(CLOCK_MAX, this.clock + bonus);
+    this.lastBonus = bonus;
+    this.bonusFlash = 1;
+    this.game.onWaveCleared(bonus, saved);
   }
 
   updateActors(dt, player) {

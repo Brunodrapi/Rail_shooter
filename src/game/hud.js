@@ -1,4 +1,4 @@
-import { PHASE } from './director.js';
+import { PHASE, CLOCK_MAX } from './director.js';
 
 const FONT = 'system-ui, "Segoe UI", Roboto, sans-serif';
 
@@ -60,19 +60,28 @@ export function renderHud(ctx, game) {
       'right'
     );
 
-  // Chrono de vague
-  if (d.phase === PHASE.COMBAT) {
-    const t = Math.max(0, d.beatTimer);
-    const crit = t < 6;
-    shadowText(
-      ctx,
-      t.toFixed(1),
-      w / 2,
-      44 * u,
-      crit ? 38 * u : 30 * u,
-      crit ? '#ff5544' : '#fff',
-      'center'
-    );
+  // Horloge de mission : elle ne se remet jamais a zero, zero = game over
+  const t = Math.max(0, d.clock);
+  const crit = t < 10;
+  const warn = t < 20;
+  const tcol = crit ? '#ff4433' : warn ? '#ffa23c' : '#fff';
+  const pump = crit ? 1 + 0.08 * Math.sin(performance.now() / 90) : 1;
+  shadowText(ctx, t.toFixed(1), w / 2, 48 * u, 38 * u * pump, tcol, 'center');
+  shadowText(ctx, 'TEMPS', w / 2, 66 * u, 10 * u, 'rgba(255,255,255,.45)', 'center', 600);
+
+  const bw = 210 * u;
+  const bx = w / 2 - bw / 2;
+  ctx.fillStyle = 'rgba(255,255,255,.14)';
+  ctx.fillRect(bx, 72 * u, bw, 5 * u);
+  ctx.fillStyle = tcol;
+  ctx.fillRect(bx, 72 * u, bw * Math.min(1, t / CLOCK_MAX), 5 * u);
+  if (d.bonusFlash > 0) {
+    ctx.save();
+    ctx.globalAlpha = d.bonusFlash;
+    ctx.strokeStyle = '#6fe07a';
+    ctx.lineWidth = 2 * u;
+    ctx.strokeRect(bx - 3 * u, 69 * u, bw + 6 * u, 11 * u);
+    ctx.restore();
   }
 
   // Vies
